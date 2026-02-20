@@ -28,12 +28,7 @@
             animation: fall linear infinite; 
             transition: transform 0.3s ease-out, background 0.3s, box-shadow 0.3s;
         }
-        @keyframes fall { 
-            0% { top: -10vh; opacity: 0; } 
-            20% { opacity: 1; } 
-            80% { opacity: 1; } 
-            100% { top: 110vh; opacity: 0; } 
-        }
+        @keyframes fall { 0% { top: -10vh; opacity: 0; } 20% { opacity: 1; } 80% { opacity: 1; } 100% { top: 110vh; opacity: 0; } }
 
         .bokeh-container { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -1; pointer-events: none; }
         .bokeh { position: absolute; border-radius: 50%; filter: blur(45px); animation: floatUp infinite alternate ease-in-out; }
@@ -79,15 +74,13 @@
         .title { font-size: 1.4em; margin-top: 10px; font-weight: bold; color: #5C4A42; line-height: 1.4; }
         .photo-count { font-size: 0.85em; color: #9A8A80; margin-top:12px; letter-spacing: 1px; }
 
-        /* --- 修正：結尾祝福語容器調寬 --- */
         .timeline-end {
             text-align: center; max-width: 900px; margin: 80px auto 140px auto; padding: 40px 30px;
             position: relative; z-index: 2;
             background: rgba(255,255,255,0.4); border-radius: 20px;
         }
         .timeline-end p { 
-            font-size: 1.2em; /* 稍微縮小字體確保在大螢幕與手機都能呈現預期效果 */
-            color: #6B4E3D; line-height: 2.2; letter-spacing: 1.5px; margin: 0; font-weight: 600;
+            font-size: 1.2em; color: #6B4E3D; line-height: 2.2; letter-spacing: 1.5px; margin: 0; font-weight: 600;
         }
         .timeline-end .heart { color: #D48C8C; font-size: 1.5em; margin-top: 25px; display: inline-block; animation: beat 2s infinite; }
         @keyframes beat { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.15); } }
@@ -109,7 +102,6 @@
         .waterfall-wrapper { break-inside: avoid; margin-bottom: 40px; }
         .waterfall-wrapper:hover .media-frame { transform: scale(1.05); z-index: 10; box-shadow: 0 20px 40px rgba(0,0,0,0.6); }
 
-        /* 魔法特效庫... (省略部分重複 CSS 以保持簡潔) */
         .magic-stars::before { content: '✨'; position: absolute; font-size: 30px; opacity: 0; pointer-events: none; z-index: 20; }
         .media-frame:hover.magic-stars::before { animation: starFly 1s ease-out forwards; }
         @keyframes starFly { 0% { top: 50%; left: 50%; opacity: 1; transform: translate(-50%, -50%) scale(0.5); } 100% { top: -10%; left: -10%; opacity: 0; transform: translate(-50%, -50%) scale(2); } }
@@ -120,8 +112,11 @@
         .media-frame:hover.magic-glow { box-shadow: 0 0 40px 10px rgba(255, 230, 150, 0.3); }
         .magic-shine::before { content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%; background: linear-gradient(to right, rgba(255,255,255,0), rgba(255,255,255,0.4), rgba(255,255,255,0)); transform: skewX(-20deg); z-index: 5; pointer-events: none; }
         .media-frame:hover.magic-shine::before { animation: shine 1s forwards; }
+        
+        /* 1px 微對焦模糊 */
         .magic-focus img { filter: blur(1px) grayscale(15%); }
         .media-frame:hover.magic-focus img { filter: blur(0px) grayscale(0%); }
+        
         .magic-hearts::before { content: '🤍'; position: absolute; font-size: 25px; opacity: 0; bottom: 10%; left: 50%; pointer-events: none; z-index: 20; }
         .media-frame:hover.magic-hearts::before { animation: heartFloat 1.2s ease-out forwards; }
         @keyframes heartFloat { 0% { bottom: 10%; opacity: 1; transform: translateX(-50%) scale(0.8); } 100% { bottom: 100%; opacity: 0; transform: translateX(-50%) scale(1.5); } }
@@ -141,6 +136,7 @@
         .media-frame:hover.magic-album::before, .media-frame:hover.magic-album::after { opacity: 1; }
         .media-frame:hover.magic-lift { transform: translateY(-15px) scale(1.2) !important; box-shadow: 0 40px 50px rgba(0,0,0,0.4); }
 
+        @media screen and (max-width: 900px) { .waterfall-area { column-count: 2; } }
         @media screen and (max-width: 600px) { 
             .header-section { padding: 60px 20px 40px 20px; } .main-title { font-size: 2.5em; }
             .waterfall-area { column-count: 1; padding: 100px 20px 20px 20px; } 
@@ -250,9 +246,11 @@
             'magic-develop', 'magic-lightleak', 'magic-glare', 'magic-album', 'magic-lift'
         ];
 
-        fetch('timeline_data.json')
+        // 使用安全相對路徑，確保 GitHub Pages 讀得到
+        fetch('./timeline_data.json')
             .then(response => response.json())
-            .then(data => { timelineData = data; renderTimeline(); });
+            .then(data => { timelineData = data; renderTimeline(); })
+            .catch(err => console.error("JSON讀取失敗，請確認檔名是否為 timeline_data.json", err));
 
         function renderTimeline() {
             const main = document.getElementById('timeline-main');
@@ -274,6 +272,13 @@
         }
 
         function formatDate(d) { return `${d.substring(0,4)}年 ${d.substring(4,6)}月${d.substring(6,8)}日`; }
+
+        function getSafeSrc(m, folder) {
+            // 自動修復路徑，相容本機與 GitHub
+            if(m.src.startsWith('./')) return m.src;
+            if(m.src.startsWith('Web_Photos')) return './' + m.src;
+            return `./Web_Photos/${folder}/${m.src.split('/').pop()}`;
+        }
 
         function showPhotos(event) {
             const overlay = document.getElementById('photo-overlay');
@@ -297,8 +302,10 @@
                     itemWrap.className = 'scatter-wrapper';
                     itemWrap.style.zIndex = highestZIndex + i;
                     itemWrap.onmouseenter = () => { highestZIndex++; itemWrap.style.zIndex = highestZIndex; };
-                    const finalSrc = m.src.startsWith('./Web_Photos') ? m.src : `./Web_Photos/${event.folder}/${m.src.split('/').pop()}`;
+                    
+                    const finalSrc = getSafeSrc(m, event.folder);
                     const mediaHtml = m.type === 'image' ? `<img src="${finalSrc}" />` : `<video src="${finalSrc}" controls></video>`;
+                    
                     itemWrap.innerHTML = `<div class="media-frame ${randomEffect}" style="transform: rotate(${randomRot}deg) translate(${randomTranslateX}px, ${randomTranslateY}px);">${mediaHtml}</div>`;
                     wrap.appendChild(itemWrap);
                 });
@@ -310,8 +317,10 @@
                     const randomEffect = magicEffects[Math.floor(Math.random() * magicEffects.length)];
                     const itemWrap = document.createElement('div');
                     itemWrap.className = 'waterfall-wrapper';
-                    const finalSrc = m.src.startsWith('./Web_Photos') ? m.src : `./Web_Photos/${event.folder}/${m.src.split('/').pop()}`;
+                    
+                    const finalSrc = getSafeSrc(m, event.folder);
                     const mediaHtml = m.type === 'image' ? `<img src="${finalSrc}" loading="lazy" />` : `<video src="${finalSrc}" controls></video>`;
+                    
                     itemWrap.innerHTML = `<div class="media-frame ${randomEffect}">${mediaHtml}</div>`;
                     wrap.appendChild(itemWrap);
                 });
