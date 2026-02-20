@@ -4,8 +4,8 @@ import json
 from PIL import Image, ImageOps
 
 # ================= 參數設定區 =================
-INPUT_DIR = 'D:\\過年給阿媽的禮物\\grandma-memory\\整理\\Original_Photos'      # 原始高畫質資料夾
-OUTPUT_DIR = 'D:\\過年給阿媽的禮物\\grandma-memory\\整理\\Web_Photos'          # 壓縮後輸出的網頁用資料夾
+INPUT_DIR = 'D:\\過年給阿媽的禮物\\grandma-memory\\Original_Photos'      # 原始高畫質資料夾
+OUTPUT_DIR = 'D:\\過年給阿媽的禮物\\grandma-memory\\Web_Photos'          # 壓縮後輸出的網頁用資料夾
 JSON_OUTPUT = 'timeline_data.json'   # 資料庫檔名
 
 # 瘦身魔法參數 (專門對付 1GB 限制)
