@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>歲月拾光 | 獻給最愛的阿嬤</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;600;700&family=Cinzel:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        :root { --primary: #A67B5B; --text: #4A3B32; --bg-color: #F8F4EC; }
+        
+        body { 
+            font-family: 'Noto Serif TC', serif; color: var(--text); margin: 0; padding: 0; overflow-x: hidden;
+            background: var(--bg-color);
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.05'/%3E%3C/svg%3E");
+            cursor: default;
+        }
+
+        #mouse-glow {
+            position: fixed; width: 800px; height: 800px; 
+            background: radial-gradient(circle, rgba(255, 220, 180, 0.4) 0%, rgba(255, 220, 180, 0.1) 30%, transparent 70%);
+            border-radius: 50%; pointer-events: none; z-index: 1; 
+            transform: translate(-50%, -50%); transition: opacity 0.3s;
+        }
+
+        #particles-container { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: 0; overflow: hidden; }
+        .particle { 
+            position: absolute; background: rgba(200, 160, 120, 0.5); border-radius: 50%; 
+            animation: fall linear infinite; 
+            transition: transform 0.3s ease-out, background 0.3s, box-shadow 0.3s;
+        }
+        @keyframes fall { 
+            0% { top: -10vh; opacity: 0; } 
+            20% { opacity: 1; } 
+            80% { opacity: 1; } 
+            100% { top: 110vh; opacity: 0; } 
+        }
+
+        .bokeh-container { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -1; pointer-events: none; }
+        .bokeh { position: absolute; border-radius: 50%; filter: blur(45px); animation: floatUp infinite alternate ease-in-out; }
+        .bokeh:nth-child(odd) { background: rgba(255, 170, 110, 0.15); } 
+        .bokeh:nth-child(even) { background: rgba(255, 110, 130, 0.1); } 
+        @keyframes floatUp { 0% { transform: translateY(0) scale(0.9); } 100% { transform: translateY(-25vh) scale(1.1); } }
+
+        .header-section { text-align: center; padding: 100px 20px 80px 20px; position: relative; z-index: 2; }
+        .header-eng { font-family: 'Cinzel', serif; color: #B0988A; font-size: 1.1em; letter-spacing: 5px; margin-bottom: 15px; }
+        .main-title { 
+            font-size: 4em; font-weight: 700; margin: 0; letter-spacing: 8px;
+            background: linear-gradient(45deg, #6B4E3D, #B58373, #6B4E3D);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            text-shadow: 2px 4px 10px rgba(0,0,0,0.05);
+        }
+        .sub-title { font-size: 1.2em; color: #8A7366; margin-top: 20px; letter-spacing: 3px; font-weight: 600; }
+        .header-line { width: 60px; height: 2px; background: var(--primary); margin: 30px auto 0 auto; opacity: 0.6; }
+        
+        .timeline-wrapper { position: relative; z-index: 2; padding-bottom: 50px; }
+        .timeline { position: relative; max-width: 900px; margin: 0 auto; padding: 20px 0; }
+        .timeline::after { content: ''; position: absolute; width: 2px; background: linear-gradient(to bottom, transparent, rgba(166,123,91,0.4) 5%, rgba(166,123,91,0.4) 95%, transparent); top: 0; bottom: 0; left: 50%; margin-left: -1px; }
+        
+        .container { padding: 30px 45px; position: relative; width: 50%; box-sizing: border-box; cursor: pointer; }
+        .container::after { 
+            content: ''; position: absolute; width: 12px; height: 12px; right: -6px; 
+            background-color: var(--bg-color); border: 3px solid var(--primary); 
+            top: 50%; transform: translateY(-50%); border-radius: 50%; z-index: 1; 
+            box-shadow: 0 0 15px rgba(166,123,91, 0.4); transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .container:hover::after { transform: translateY(-50%) scale(1.6); background-color: var(--primary); box-shadow: 0 0 20px rgba(166,123,91, 0.8); }
+        .left { left: 0; text-align: right; }
+        .right { left: 50%; }
+        .right::after { left: -9px; }
+        
+        .content { 
+            padding: 28px 35px; border-radius: 12px;
+            background: rgba(255, 255, 255, 0.6); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.9); box-shadow: 0 8px 25px rgba(100, 80, 70, 0.06);
+            transition: all 0.4s ease; 
+        }
+        .container:hover .content { transform: translateY(-5px) scale(1.02); box-shadow: 0 15px 35px rgba(100, 80, 70, 0.12); background: rgba(255, 255, 255, 0.85); }
+        .date { font-family: 'Cinzel', serif; font-weight: 600; color: var(--primary); font-size: 1.1em; letter-spacing: 2px; }
+        .title { font-size: 1.4em; margin-top: 10px; font-weight: bold; color: #5C4A42; line-height: 1.4; }
+        .photo-count { font-size: 0.85em; color: #9A8A80; margin-top:12px; letter-spacing: 1px; }
+
+        /* --- 修正：結尾祝福語容器調寬 --- */
+        .timeline-end {
+            text-align: center; max-width: 900px; margin: 80px auto 140px auto; padding: 40px 30px;
+            position: relative; z-index: 2;
+            background: rgba(255,255,255,0.4); border-radius: 20px;
+        }
+        .timeline-end p { 
+            font-size: 1.2em; /* 稍微縮小字體確保在大螢幕與手機都能呈現預期效果 */
+            color: #6B4E3D; line-height: 2.2; letter-spacing: 1.5px; margin: 0; font-weight: 600;
+        }
+        .timeline-end .heart { color: #D48C8C; font-size: 1.5em; margin-top: 25px; display: inline-block; animation: beat 2s infinite; }
+        @keyframes beat { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.15); } }
+
+        #photo-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(20, 18, 16, 0.96); display: none; z-index: 1000; overflow-y: auto; overflow-x: hidden; }
+        .close-btn { position: fixed; top: 25px; right: 45px; color: #D5C5B5; font-size: 45px; cursor: pointer; z-index: 2000; transition: 0.3s; }
+        .close-btn:hover { transform: scale(1.1); color: #FFF; }
+        .overlay-title { position: fixed; top: 35px; left: 45px; color: #F5EDE3; margin: 0; z-index: 2000; font-size: 2em; text-shadow: 0 4px 10px rgba(0,0,0,0.8); letter-spacing: 2px; pointer-events: none; }
+
+        .media-frame { background: white; padding: 12px 12px 40px 12px; border-radius: 2px; box-shadow: 0 10px 30px rgba(0,0,0,0.6); transition: all 0.5s cubic-bezier(0.25, 0.8, 0.25, 1); position: relative; cursor: pointer; overflow: hidden; }
+        .media-frame img, .media-frame video { width: 100%; display: block; transition: 0.6s ease; }
+
+        .scatter-area { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 40px; padding: 120px 40px 60px 40px; min-height: 80vh; max-width: 1400px; margin: 0 auto; }
+        .scatter-wrapper { position: relative; width: 300px; transition: z-index 0s; }
+        .scatter-wrapper:hover { z-index: 1500 !important; }
+        .scatter-wrapper:hover .media-frame { transform: rotate(0deg) translate(0,0) scale(1.3) !important; box-shadow: 0 30px 60px rgba(0,0,0,0.8); }
+
+        .waterfall-area { column-count: 3; column-gap: 40px; padding: 120px 50px 50px 50px; max-width: 1400px; margin: 0 auto; }
+        .waterfall-wrapper { break-inside: avoid; margin-bottom: 40px; }
+        .waterfall-wrapper:hover .media-frame { transform: scale(1.05); z-index: 10; box-shadow: 0 20px 40px rgba(0,0,0,0.6); }
+
+        /* 魔法特效庫... (省略部分重複 CSS 以保持簡潔) */
+        .magic-stars::before { content: '✨'; position: absolute; font-size: 30px; opacity: 0; pointer-events: none; z-index: 20; }
+        .media-frame:hover.magic-stars::before { animation: starFly 1s ease-out forwards; }
+        @keyframes starFly { 0% { top: 50%; left: 50%; opacity: 1; transform: translate(-50%, -50%) scale(0.5); } 100% { top: -10%; left: -10%; opacity: 0; transform: translate(-50%, -50%) scale(2); } }
+        .magic-vintage img { filter: sepia(0.25) contrast(0.9); }
+        .media-frame:hover.magic-vintage img { filter: sepia(0) contrast(1.1); }
+        .media-frame:hover.magic-wiggle { animation: gentleWiggle 1.5s ease-in-out infinite alternate; }
+        @keyframes gentleWiggle { 0% { transform: rotate(-1deg) scale(1.3); } 100% { transform: rotate(1deg) scale(1.3); } }
+        .media-frame:hover.magic-glow { box-shadow: 0 0 40px 10px rgba(255, 230, 150, 0.3); }
+        .magic-shine::before { content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%; background: linear-gradient(to right, rgba(255,255,255,0), rgba(255,255,255,0.4), rgba(255,255,255,0)); transform: skewX(-20deg); z-index: 5; pointer-events: none; }
+        .media-frame:hover.magic-shine::before { animation: shine 1s forwards; }
+        .magic-focus img { filter: blur(1px) grayscale(15%); }
+        .media-frame:hover.magic-focus img { filter: blur(0px) grayscale(0%); }
+        .magic-hearts::before { content: '🤍'; position: absolute; font-size: 25px; opacity: 0; bottom: 10%; left: 50%; pointer-events: none; z-index: 20; }
+        .media-frame:hover.magic-hearts::before { animation: heartFloat 1.2s ease-out forwards; }
+        @keyframes heartFloat { 0% { bottom: 10%; opacity: 1; transform: translateX(-50%) scale(0.8); } 100% { bottom: 100%; opacity: 0; transform: translateX(-50%) scale(1.5); } }
+        .media-frame:hover.magic-3d { transform: perspective(800px) rotateX(10deg) rotateY(-10deg) scale(1.15) !important; }
+        .magic-polaroid { padding: 5px !important; }
+        .media-frame:hover.magic-polaroid { padding: 15px 15px 50px 15px !important; background: #FAFAFA; }
+        .media-frame:hover.magic-zoom img { transform: scale(1.12); }
+        .magic-develop img { filter: contrast(0.7) brightness(0.8) sepia(0.3); }
+        .media-frame:hover.magic-develop img { filter: contrast(1.15) brightness(1.1) sepia(0); transition-duration: 1.5s; }
+        .magic-lightleak::after { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(45deg, rgba(255,100,0,0.4) 0%, transparent 60%); opacity: 0; transition: 0.5s; pointer-events: none; z-index: 2; mix-blend-mode: screen; }
+        .media-frame:hover.magic-lightleak::after { opacity: 1; }
+        .magic-glare::after { content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%; background: linear-gradient(105deg, transparent 20%, rgba(255,255,255,0.3) 25%, transparent 30%); transition: 0.6s; pointer-events: none; z-index: 5; }
+        .media-frame:hover.magic-glare::after { left: 100%; }
+        .magic-album::before, .magic-album::after { content: ''; position: absolute; width: 20px; height: 20px; background: #333; opacity: 0; transition: 0.3s; z-index: 5; }
+        .magic-album::before { top: 12px; left: 12px; clip-path: polygon(0 0, 100% 0, 0 100%); }
+        .magic-album::after { bottom: 40px; right: 12px; clip-path: polygon(100% 100%, 100% 0, 0 100%); }
+        .media-frame:hover.magic-album::before, .media-frame:hover.magic-album::after { opacity: 1; }
+        .media-frame:hover.magic-lift { transform: translateY(-15px) scale(1.2) !important; box-shadow: 0 40px 50px rgba(0,0,0,0.4); }
+
+        @media screen and (max-width: 600px) { 
+            .header-section { padding: 60px 20px 40px 20px; } .main-title { font-size: 2.5em; }
+            .waterfall-area { column-count: 1; padding: 100px 20px 20px 20px; } 
+            .timeline::after { left: 20px; } .container { width: 100%; padding-left: 50px; padding-right: 20px; } 
+            .container::after { left: 13px; } .left { text-align: left; } .right { left: 0%; } 
+            #mouse-glow { display: none; } 
+        }
+    </style>
+</head>
+<body>
+
+    <div id="mouse-glow"></div>
+    <div id="particles-container"></div>
+    <div class="bokeh-container" id="bokeh-bg"></div>
+
+    <div class="header-section">
+        <div class="header-eng">MEMORY & TIME</div>
+        <h1 class="main-title">歲月拾光</h1>
+        <div class="sub-title">獻給最愛的阿嬤 ‧ 2004 - 2026</div>
+        <div class="header-line"></div>
+    </div>
+
+    <div class="timeline-wrapper">
+        <div class="timeline" id="timeline-main"></div>
+    </div>
+
+    <div class="timeline-end">
+        <p>看著這些整理好的照片，才發現原來我們一起走過了這麼多開心的日子。<br>未來的路還很長，還要阿嬤繼續陪著我們，吃吃喝喝、到處走走。<br>阿嬤，要一直平安健康喔！愛您。</p>
+        <div class="heart">❤</div>
+    </div>
+
+    <div id="photo-overlay">
+        <h2 class="overlay-title" id="overlay-title-text"></h2>
+        <span class="close-btn" onclick="closeOverlay()">×</span>
+        <div id="media-display-area"></div>
+    </div>
+
+    <script>
+        const mouseGlow = document.getElementById('mouse-glow');
+        const particlesContainer = document.getElementById('particles-container');
+        const particlesArray = [];
+
+        for(let i=0; i<30; i++) {
+            let p = document.createElement('div');
+            p.className = 'particle';
+            p.style.width = Math.random() * 4 + 2 + 'px';
+            p.style.height = p.style.width;
+            p.style.left = Math.random() * 100 + 'vw';
+            p.style.animationDuration = Math.random() * 15 + 10 + 's';
+            p.style.animationDelay = Math.random() * 10 + 's';
+            particlesContainer.appendChild(p);
+            particlesArray.push(p);
+        }
+
+        document.addEventListener('mousemove', (e) => {
+            const mouseX = e.clientX;
+            const mouseY = e.clientY;
+            mouseGlow.style.left = mouseX + 'px';
+            mouseGlow.style.top = mouseY + 'px';
+
+            particlesArray.forEach(p => {
+                const rect = p.getBoundingClientRect();
+                const px = rect.left + rect.width / 2;
+                const py = rect.top + rect.height / 2;
+                const dist = Math.hypot(mouseX - px, mouseY - py);
+
+                if (dist < 150) {
+                    const angle = Math.atan2(py - mouseY, px - mouseX);
+                    const force = (150 - dist) / 150; 
+                    const pushX = Math.cos(angle) * force * 40;
+                    const pushY = Math.sin(angle) * force * 40;
+                    p.style.transform = `translate(${pushX}px, ${pushY}px) scale(2)`;
+                    p.style.background = 'rgba(255, 255, 255, 0.9)';
+                    p.style.boxShadow = '0 0 10px rgba(255, 255, 255, 0.8)';
+                } else {
+                    p.style.transform = 'translate(0, 0) scale(1)';
+                    p.style.background = 'rgba(200, 160, 120, 0.5)';
+                    p.style.boxShadow = 'none';
+                }
+            });
+        });
+
+        document.getElementById('photo-overlay').addEventListener('click', function(e) {
+            if (!e.target.closest('.media-frame') && !e.target.closest('.overlay-title')) {
+                closeOverlay();
+            }
+        });
+
+        const bokehBg = document.getElementById('bokeh-bg');
+        for(let i=0; i<10; i++) {
+            let b = document.createElement('div');
+            b.className = 'bokeh';
+            b.style.width = Math.random() * 200 + 100 + 'px';
+            b.style.height = b.style.width;
+            b.style.left = Math.random() * 100 + 'vw';
+            b.style.top = Math.random() * 100 + 'vh';
+            b.style.animationDuration = Math.random() * 10 + 15 + 's'; 
+            b.style.animationDelay = Math.random() * -10 + 's';
+            bokehBg.appendChild(b);
+        }
+
+        let timelineData = [];
+        let highestZIndex = 1001;
+        const magicEffects = [
+            'magic-stars', 'magic-vintage', 'magic-wiggle', 'magic-glow', 'magic-shine', 
+            'magic-focus', 'magic-hearts', 'magic-3d', 'magic-polaroid', 'magic-zoom',
+            'magic-develop', 'magic-lightleak', 'magic-glare', 'magic-album', 'magic-lift'
+        ];
+
+        fetch('timeline_data.json')
+            .then(response => response.json())
+            .then(data => { timelineData = data; renderTimeline(); });
+
+        function renderTimeline() {
+            const main = document.getElementById('timeline-main');
+            timelineData.forEach((item, index) => {
+                const container = document.createElement('div');
+                container.className = `container ${index % 2 === 0 ? 'left' : 'right'}`;
+                container.onclick = () => showPhotos(item);
+                
+                let displayTitle = item.title === "美好回憶" ? "" : item.title; 
+                container.innerHTML = `
+                    <div class="content">
+                        <div class="date">${formatDate(item.date)}</div>
+                        ${displayTitle ? `<div class="title">${displayTitle}</div>` : ''}
+                        <div class="photo-count">共 ${item.media.length} 份回憶</div>
+                    </div>
+                `;
+                main.appendChild(container);
+            });
+        }
+
+        function formatDate(d) { return `${d.substring(0,4)}年 ${d.substring(4,6)}月${d.substring(6,8)}日`; }
+
+        function showPhotos(event) {
+            const overlay = document.getElementById('photo-overlay');
+            const displayArea = document.getElementById('media-display-area');
+            const titleEl = document.getElementById('overlay-title-text');
+            
+            titleEl.innerText = event.title === "美好回憶" ? formatDate(event.date) : event.title;
+            displayArea.innerHTML = ''; 
+            overlay.style.display = 'block';
+            highestZIndex = 1001; 
+
+            if (event.media.length < 10) {
+                const wrap = document.createElement('div');
+                wrap.className = 'scatter-area';
+                event.media.forEach((m, i) => {
+                    const randomEffect = magicEffects[Math.floor(Math.random() * magicEffects.length)];
+                    const randomRot = Math.floor(Math.random() * 30) - 15; 
+                    const randomTranslateX = Math.floor(Math.random() * 40) - 20; 
+                    const randomTranslateY = Math.floor(Math.random() * 40) - 20; 
+                    const itemWrap = document.createElement('div');
+                    itemWrap.className = 'scatter-wrapper';
+                    itemWrap.style.zIndex = highestZIndex + i;
+                    itemWrap.onmouseenter = () => { highestZIndex++; itemWrap.style.zIndex = highestZIndex; };
+                    const finalSrc = m.src.startsWith('./Web_Photos') ? m.src : `./Web_Photos/${event.folder}/${m.src.split('/').pop()}`;
+                    const mediaHtml = m.type === 'image' ? `<img src="${finalSrc}" />` : `<video src="${finalSrc}" controls></video>`;
+                    itemWrap.innerHTML = `<div class="media-frame ${randomEffect}" style="transform: rotate(${randomRot}deg) translate(${randomTranslateX}px, ${randomTranslateY}px);">${mediaHtml}</div>`;
+                    wrap.appendChild(itemWrap);
+                });
+                displayArea.appendChild(wrap);
+            } else {
+                const wrap = document.createElement('div');
+                wrap.className = 'waterfall-area';
+                event.media.forEach(m => {
+                    const randomEffect = magicEffects[Math.floor(Math.random() * magicEffects.length)];
+                    const itemWrap = document.createElement('div');
+                    itemWrap.className = 'waterfall-wrapper';
+                    const finalSrc = m.src.startsWith('./Web_Photos') ? m.src : `./Web_Photos/${event.folder}/${m.src.split('/').pop()}`;
+                    const mediaHtml = m.type === 'image' ? `<img src="${finalSrc}" loading="lazy" />` : `<video src="${finalSrc}" controls></video>`;
+                    itemWrap.innerHTML = `<div class="media-frame ${randomEffect}">${mediaHtml}</div>`;
+                    wrap.appendChild(itemWrap);
+                });
+                displayArea.appendChild(wrap);
+            }
+        }
+
+        function closeOverlay() { 
+            document.getElementById('photo-overlay').style.display = 'none'; 
+            document.getElementById('media-display-area').innerHTML = '';
+        }
+    </script>
+</body>
+</html>
