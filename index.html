@@ -15,6 +15,40 @@
             cursor: default;
         }
 
+        /* --- 全新：質感密碼鎖畫面 --- */
+        #login-overlay { 
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; 
+            background: rgba(248, 244, 236, 0.85); z-index: 9999; 
+            display: flex; justify-content: center; align-items: center; 
+            backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
+            transition: opacity 0.8s ease-out, visibility 0.8s; 
+        }
+        .login-box { 
+            background: rgba(255, 255, 255, 0.7); padding: 50px 60px; border-radius: 20px; 
+            box-shadow: 0 20px 50px rgba(100, 80, 70, 0.15); text-align: center; 
+            border: 1px solid rgba(255, 255, 255, 0.9);
+            transform: translateY(0); transition: transform 0.5s;
+        }
+        .login-box h2 { color: #6B4E3D; letter-spacing: 4px; margin-top: 0; font-size: 2em; }
+        .login-box p { color: #8A7366; font-size: 1.1em; margin-bottom: 30px; letter-spacing: 1px; }
+        #pwd-input { 
+            padding: 15px 20px; border: 2px solid #D5C5B5; border-radius: 30px; 
+            font-size: 1.2em; text-align: center; outline: none; color: #5C4A42; 
+            font-family: 'Noto Serif TC', serif; transition: 0.3s; margin-bottom: 25px; 
+            width: 100%; box-sizing: border-box; background: rgba(255,255,255,0.9);
+            letter-spacing: 5px;
+        }
+        #pwd-input:focus { border-color: #A67B5B; box-shadow: 0 0 15px rgba(166,123,91, 0.2); }
+        .login-btn { 
+            background: #A67B5B; color: white; border: none; padding: 15px 40px; 
+            border-radius: 30px; font-size: 1.1em; cursor: pointer; 
+            font-family: 'Noto Serif TC', serif; transition: 0.3s; letter-spacing: 3px; font-weight: 600;
+        }
+        .login-btn:hover { background: #8C6A5D; transform: translateY(-2px); box-shadow: 0 8px 20px rgba(166,123,91, 0.4); }
+        #pwd-error { color: #D48C8C; font-size: 0.95em; margin-top: 15px; display: none; font-weight: 600; animation: shake 0.4s; }
+        @keyframes shake { 0%, 100% {transform: translateX(0);} 25% {transform: translateX(-5px);} 75% {transform: translateX(5px);} }
+        /* -------------------------- */
+
         #mouse-glow {
             position: fixed; width: 800px; height: 800px; 
             background: radial-gradient(circle, rgba(255, 220, 180, 0.4) 0%, rgba(255, 220, 180, 0.1) 30%, transparent 70%);
@@ -93,7 +127,6 @@
         .media-frame { background: white; padding: 12px 12px 40px 12px; border-radius: 2px; box-shadow: 0 10px 30px rgba(0,0,0,0.6); transition: all 0.5s cubic-bezier(0.25, 0.8, 0.25, 1); position: relative; cursor: pointer; overflow: hidden; }
         .media-frame img, .media-frame video { width: 100%; display: block; transition: 0.6s ease; }
 
-        /* --- 散落與瀑布流排版區 --- */
         .scatter-area { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 40px; padding: 120px 40px 60px 40px; min-height: 80vh; max-width: 1400px; margin: 0 auto; }
         .scatter-wrapper { position: relative; width: 300px; transition: z-index 0s; }
         .scatter-wrapper:hover { z-index: 1500 !important; }
@@ -103,57 +136,40 @@
         .waterfall-wrapper { break-inside: avoid; margin-bottom: 40px; }
         .waterfall-wrapper:hover .media-frame { transform: scale(1.05); z-index: 10; box-shadow: 0 20px 40px rgba(0,0,0,0.6); }
 
-        /* --- 手機/平板專用：點擊保持放大的 CSS 類別 --- */
         .scatter-wrapper.mobile-focus { z-index: 1500 !important; }
         .scatter-wrapper.mobile-focus .media-frame { transform: rotate(0deg) translate(0,0) scale(1.35) !important; box-shadow: 0 30px 60px rgba(0,0,0,0.8); }
-        
         .waterfall-wrapper.mobile-focus { z-index: 1500 !important; position: relative; }
         .waterfall-wrapper.mobile-focus .media-frame { transform: scale(1.1) !important; box-shadow: 0 25px 50px rgba(0,0,0,0.8); }
 
-        /* 魔法特效庫 */
         .magic-stars::before { content: '✨'; position: absolute; font-size: 30px; opacity: 0; pointer-events: none; z-index: 20; }
         .media-frame:hover.magic-stars::before, .mobile-focus .media-frame.magic-stars::before { animation: starFly 1s ease-out forwards; }
         @keyframes starFly { 0% { top: 50%; left: 50%; opacity: 1; transform: translate(-50%, -50%) scale(0.5); } 100% { top: -10%; left: -10%; opacity: 0; transform: translate(-50%, -50%) scale(2); } }
-        
         .magic-vintage img { filter: sepia(0.25) contrast(0.9); }
         .media-frame:hover.magic-vintage img, .mobile-focus .media-frame.magic-vintage img { filter: sepia(0) contrast(1.1); }
-        
         .media-frame:hover.magic-wiggle, .mobile-focus .media-frame.magic-wiggle { animation: gentleWiggle 1.5s ease-in-out infinite alternate; }
         @keyframes gentleWiggle { 0% { transform: rotate(-1deg) scale(1.3); } 100% { transform: rotate(1deg) scale(1.3); } }
-        
         .media-frame:hover.magic-glow, .mobile-focus .media-frame.magic-glow { box-shadow: 0 0 40px 10px rgba(255, 230, 150, 0.3); }
-        
         .magic-shine::before { content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%; background: linear-gradient(to right, rgba(255,255,255,0), rgba(255,255,255,0.4), rgba(255,255,255,0)); transform: skewX(-20deg); z-index: 5; pointer-events: none; }
         .media-frame:hover.magic-shine::before, .mobile-focus .media-frame.magic-shine::before { animation: shine 1s forwards; }
-        
         .magic-focus img { filter: blur(1px) grayscale(15%); }
         .media-frame:hover.magic-focus img, .mobile-focus .media-frame.magic-focus img { filter: blur(0px) grayscale(0%); }
-        
         .magic-hearts::before { content: '🤍'; position: absolute; font-size: 25px; opacity: 0; bottom: 10%; left: 50%; pointer-events: none; z-index: 20; }
         .media-frame:hover.magic-hearts::before, .mobile-focus .media-frame.magic-hearts::before { animation: heartFloat 1.2s ease-out forwards; }
         @keyframes heartFloat { 0% { bottom: 10%; opacity: 1; transform: translateX(-50%) scale(0.8); } 100% { bottom: 100%; opacity: 0; transform: translateX(-50%) scale(1.5); } }
-        
         .media-frame:hover.magic-3d, .mobile-focus .media-frame.magic-3d { transform: perspective(800px) rotateX(10deg) rotateY(-10deg) scale(1.15) !important; }
-        
         .magic-polaroid { padding: 5px !important; }
         .media-frame:hover.magic-polaroid, .mobile-focus .media-frame.magic-polaroid { padding: 15px 15px 50px 15px !important; background: #FAFAFA; }
-        
         .media-frame:hover.magic-zoom img, .mobile-focus .media-frame.magic-zoom img { transform: scale(1.12); }
-        
         .magic-develop img { filter: contrast(0.7) brightness(0.8) sepia(0.3); }
         .media-frame:hover.magic-develop img, .mobile-focus .media-frame.magic-develop img { filter: contrast(1.15) brightness(1.1) sepia(0); transition-duration: 1.5s; }
-        
         .magic-lightleak::after { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(45deg, rgba(255,100,0,0.4) 0%, transparent 60%); opacity: 0; transition: 0.5s; pointer-events: none; z-index: 2; mix-blend-mode: screen; }
         .media-frame:hover.magic-lightleak::after, .mobile-focus .media-frame.magic-lightleak::after { opacity: 1; }
-        
         .magic-glare::after { content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%; background: linear-gradient(105deg, transparent 20%, rgba(255,255,255,0.3) 25%, transparent 30%); transition: 0.6s; pointer-events: none; z-index: 5; }
         .media-frame:hover.magic-glare::after, .mobile-focus .media-frame.magic-glare::after { left: 100%; }
-        
         .magic-album::before, .magic-album::after { content: ''; position: absolute; width: 20px; height: 20px; background: #333; opacity: 0; transition: 0.3s; z-index: 5; }
         .magic-album::before { top: 12px; left: 12px; clip-path: polygon(0 0, 100% 0, 0 100%); }
         .magic-album::after { bottom: 40px; right: 12px; clip-path: polygon(100% 100%, 100% 0, 0 100%); }
         .media-frame:hover.magic-album::before, .media-frame:hover.magic-album::after, .mobile-focus .media-frame.magic-album::before, .mobile-focus .media-frame.magic-album::after { opacity: 1; }
-        
         .media-frame:hover.magic-lift, .mobile-focus .media-frame.magic-lift { transform: translateY(-15px) scale(1.2) !important; box-shadow: 0 40px 50px rgba(0,0,0,0.4); }
 
         @media screen and (max-width: 900px) { .waterfall-area { column-count: 2; } }
@@ -163,10 +179,22 @@
             .timeline::after { left: 20px; } .container { width: 100%; padding-left: 50px; padding-right: 20px; } 
             .container::after { left: 13px; } .left { text-align: left; } .right { left: 0%; } 
             #mouse-glow { display: none; } 
+            .login-box { padding: 40px 30px; width: 90%; }
         }
     </style>
 </head>
 <body>
+
+    <div id="login-overlay">
+        <div class="login-box">
+            <h2>通關密語</h2>
+            <p>請輸入專屬密碼解鎖拾光相簿</p>
+            <input type="password" id="pwd-input" placeholder="輸入密碼">
+            <br>
+            <button onclick="checkPwd()" class="login-btn">進入回憶</button>
+            <p id="pwd-error">密碼不對喔，再試一次！</p>
+        </div>
+    </div>
 
     <div id="mouse-glow"></div>
     <div id="particles-container"></div>
@@ -184,7 +212,8 @@
     </div>
 
     <div class="timeline-end">
-    <p>看著這些整理好的照片，才發現原來我們一起走過了這麼多開心的日子。<br>這本相簿會一直記錄下去，阿嬤要繼續陪著我們，吃吃喝喝、到處走走。<br>阿嬤，要一直平安健康喔！愛您。</p>        <div class="heart">❤</div>
+        <p>看著這些整理好的照片，才發現原來我們一起走過了這麼多開心的日子。<br>這本相簿會一直記錄下去，阿嬤要繼續陪著我們，吃吃喝喝、到處走走。<br>阿嬤，要一直平安健康喔！愛您。</p>
+        <div class="heart">❤</div>
     </div>
 
     <div id="photo-overlay">
@@ -194,6 +223,39 @@
     </div>
 
     <script>
+        // ==========================================
+        // 🔒 密碼鎖設定區 (請在這裡修改你的密碼)
+        // ==========================================
+        const SECRET_PWD = "0117"; // <-- 把 0000 改成阿嬤的生日或你們約定好的密碼
+        
+        function checkPwd() {
+            const input = document.getElementById('pwd-input').value;
+            const errorMsg = document.getElementById('pwd-error');
+            const overlay = document.getElementById('login-overlay');
+            
+            if(input === SECRET_PWD) {
+                // 密碼正確：淡出鎖定畫面
+                errorMsg.style.display = 'none';
+                overlay.style.opacity = '0';
+                setTimeout(() => { 
+                    overlay.style.visibility = 'hidden'; 
+                }, 800); // 等待淡出動畫結束
+            } else {
+                // 密碼錯誤：清空輸入框並顯示錯誤提示
+                errorMsg.style.display = 'block';
+                document.getElementById('pwd-input').value = '';
+                // 觸發震動動畫
+                errorMsg.style.animation = 'none';
+                setTimeout(() => errorMsg.style.animation = 'shake 0.4s', 10);
+            }
+        }
+
+        // 支援按 Enter 鍵送出密碼
+        document.getElementById('pwd-input').addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') checkPwd();
+        });
+        // ==========================================
+
         const mouseGlow = document.getElementById('mouse-glow');
         const particlesContainer = document.getElementById('particles-container');
         const particlesArray = [];
@@ -238,7 +300,6 @@
             });
         });
 
-        // 點擊背景關閉相簿 (包含清除放大狀態)
         document.getElementById('photo-overlay').addEventListener('click', function(e) {
             if (!e.target.closest('.media-frame') && !e.target.closest('.overlay-title')) {
                 closeOverlay();
@@ -298,24 +359,16 @@
             return `./Web_Photos/${folder}/${m.src.split('/').pop()}`;
         }
 
-        // 核心：手機與平板的觸控放大邏輯
         function toggleFocus(e) {
-            // 防止點擊事件擴散到背景導致關閉視窗
             e.stopPropagation(); 
-            
-            // 檢查自己目前是否是放大狀態
             const isFocused = this.classList.contains('mobile-focus');
-            
-            // 步驟1：先把全場所有照片的「放大狀態」都移除，確保畫面乾淨
             document.querySelectorAll('.scatter-wrapper, .waterfall-wrapper').forEach(el => {
                 el.classList.remove('mobile-focus');
             });
-            
-            // 步驟2：如果剛剛這張照片「沒有」放大，就把它放大 (如果是放大的，步驟1已經把它縮小了，達成了點兩下縮小的效果)
             if (!isFocused) {
                 this.classList.add('mobile-focus');
                 highestZIndex++;
-                this.style.zIndex = highestZIndex; // 確保它浮在最上面
+                this.style.zIndex = highestZIndex; 
             }
         }
 
@@ -340,10 +393,7 @@
                     const itemWrap = document.createElement('div');
                     itemWrap.className = 'scatter-wrapper';
                     itemWrap.style.zIndex = highestZIndex + i;
-                    
-                    // 電腦版 Hover 依然保留
                     itemWrap.onmouseenter = () => { highestZIndex++; itemWrap.style.zIndex = highestZIndex; };
-                    // 加入手機版觸控點擊邏輯
                     itemWrap.onclick = toggleFocus;
                     
                     const finalSrc = getSafeSrc(m, event.folder);
@@ -359,8 +409,6 @@
                     const randomEffect = magicEffects[Math.floor(Math.random() * magicEffects.length)];
                     const itemWrap = document.createElement('div');
                     itemWrap.className = 'waterfall-wrapper';
-                    
-                    // 加入手機版觸控點擊邏輯
                     itemWrap.onclick = toggleFocus;
                     
                     const finalSrc = getSafeSrc(m, event.folder);
@@ -375,7 +423,6 @@
         function closeOverlay() { 
             document.getElementById('photo-overlay').style.display = 'none'; 
             document.getElementById('media-display-area').innerHTML = '';
-            // 關閉相簿時，把所有放大狀態清空
             document.querySelectorAll('.mobile-focus').forEach(el => el.classList.remove('mobile-focus'));
         }
     </script>
